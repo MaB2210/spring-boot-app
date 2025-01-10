@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
+import io.reactivestax.spring_boot_app.dto.EmployeeFullDTO;
 import io.reactivestax.spring_boot_app.service.EmployeeService;
 import jakarta.validation.Valid;
 
@@ -36,9 +37,26 @@ public class EmployeeController {
         return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    // @PostMapping
+    // public String createEmployee(@Validated(CreateGroup.class) @RequestBody EmployeeDTO employeeDTO) {
+    //     // Create logic
+    //     return "Employee created";
+    // }
+
+    // @PutMapping
+    // public String updateEmployee(@Validated(UpdateGroup.class) @RequestBody EmployeeDTO employeeDTO) {
+    //     // Update logic
+    //     return "Employee updated";
+    // }
+
+    @PostMapping("/employee")
     public EmployeeDTO createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
         return service.save(employeeDTO);
+    }
+
+    @PostMapping("/fullemployee")
+    public ResponseEntity<EmployeeFullDTO> createEmployee(@Valid @RequestBody EmployeeFullDTO employeeFullDTO) {
+        return ResponseEntity.ok().body(employeeFullDTO);
     }
 
     @PutMapping("/{id}")

@@ -1,5 +1,6 @@
 package io.reactivestax.spring_boot_app.dto;
 
+import io.reactivestax.spring_boot_app.validation.ValidZipCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -24,5 +25,7 @@ public class AddressDTO {
     @NotBlank(message = "Zip Code must not be blank")
     @Pattern(regexp = "\\d{5}", message = "Zip Code must be a 5-digit number")
     private String zipCode;
-}
 
+    @ValidZipCode
+    private String zipCodeTwo;
+}
