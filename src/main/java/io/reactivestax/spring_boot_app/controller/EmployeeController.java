@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
-import io.reactivestax.spring_boot_app.dto.EmployeeFullDTO;
+import io.reactivestax.spring_boot_app.exception.ResourceNotFoundException;
 import io.reactivestax.spring_boot_app.service.EmployeeService;
-import jakarta.validation.Valid;
+import io.reactivestax.spring_boot_app.validation.CreateGroup;
+import io.reactivestax.spring_boot_app.validation.UpdateGroup;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -34,30 +36,32 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
         Optional<EmployeeDTO> employee = service.findById(id);
-        return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return employee.map(ResponseEntity::ok)
+        .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + id));
     }
 
-    // @PostMapping
-    // public String createEmployee(@Validated(CreateGroup.class) @RequestBody EmployeeDTO employeeDTO) {
-    //     // Create logic
-    //     return "Employee created";
+    @PostMapping("/employeenew")
+    public String createEmployee(@Validated(CreateGroup.class) @RequestBody EmployeeDTO employeeDTO) {
+        // Create logic
+        return "Employee created";
+    }
+
+    @PostMapping("/employeeexisting")
+    public String updateEmployee(@Validated(UpdateGroup.class) @RequestBody EmployeeDTO employeeDTO) {
+        // Update logic
+        return "Employee updated";
+    }
+
+    // @PostMapping("/employee")
+    // public EmployeeDTO createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
+    //     //throw new RuntimeException("some error");
+    //     return service.save(employeeDTO);
     // }
 
-    // @PutMapping
-    // public String updateEmployee(@Validated(UpdateGroup.class) @RequestBody EmployeeDTO employeeDTO) {
-    //     // Update logic
-    //     return "Employee updated";
+    // @PostMapping("/fullemployee")
+    // public ResponseEntity<EmployeeFullDTO> createEmployee(@Valid @RequestBody EmployeeFullDTO employeeFullDTO) {
+    //     return ResponseEntity.ok().body(employeeFullDTO);
     // }
-
-    @PostMapping("/employee")
-    public EmployeeDTO createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
-        return service.save(employeeDTO);
-    }
-
-    @PostMapping("/fullemployee")
-    public ResponseEntity<EmployeeFullDTO> createEmployee(@Valid @RequestBody EmployeeFullDTO employeeFullDTO) {
-        return ResponseEntity.ok().body(employeeFullDTO);
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employeeDetails) {

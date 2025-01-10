@@ -6,8 +6,8 @@ import jakarta.validation.ConstraintValidatorContext;
 public class ZipCodeValidator implements ConstraintValidator<ValidZipCode, String> {
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(String zipCodeString, ConstraintValidatorContext context) {
         // A valid zip code must be exactly 5 digits
-        return value != null && value.matches("\\d{5}");
+        return zipCodeString != null && zipCodeString.matches("\\d{5}");
     }
 }

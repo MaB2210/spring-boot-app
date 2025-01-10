@@ -15,7 +15,8 @@ public class DateRangeValidator implements ConstraintValidator<ValidDateRange, E
         boolean isValid = eventDTO.getStartDate().isBefore(eventDTO.getEndDate());
         if (!isValid) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("End date must be after start date")
+            context
+            .buildConstraintViolationWithTemplate("End date must be after start date --version2")
                     .addConstraintViolation();
         }
         return isValid;
