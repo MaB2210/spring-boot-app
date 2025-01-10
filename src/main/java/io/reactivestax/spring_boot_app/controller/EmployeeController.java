@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
 import io.reactivestax.spring_boot_app.service.EmployeeService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -36,7 +37,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public EmployeeDTO createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+    public EmployeeDTO createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
         return service.save(employeeDTO);
     }
 

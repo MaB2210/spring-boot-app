@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.reactivestax.spring_boot_app.dto.AddressDTO;
 import io.reactivestax.spring_boot_app.service.AddressService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/addresses")
@@ -36,7 +37,7 @@ public class AddressController {
     }
 
     @PostMapping
-    public AddressDTO createAddress(@RequestBody AddressDTO addressDTO) {
+    public AddressDTO createAddress(@Valid @RequestBody AddressDTO addressDTO) {
         return service.save(addressDTO);
     }
 
