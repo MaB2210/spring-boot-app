@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
+import io.reactivestax.spring_boot_app.dto.EmployeeFullDTO;
 import io.reactivestax.spring_boot_app.exception.ResourceNotFoundException;
 import io.reactivestax.spring_boot_app.service.EmployeeService;
 import io.reactivestax.spring_boot_app.validation.CreateGroup;
 import io.reactivestax.spring_boot_app.validation.UpdateGroup;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -52,16 +54,16 @@ public class EmployeeController {
         return "Employee updated";
     }
 
-    // @PostMapping("/employee")
-    // public EmployeeDTO createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
-    //     //throw new RuntimeException("some error");
-    //     return service.save(employeeDTO);
-    // }
+    @PostMapping("/employee")
+    public EmployeeDTO createEmployee2(@Valid @RequestBody EmployeeDTO employeeDTO) {
+        //throw new RuntimeException("some error");
+        return service.save(employeeDTO);
+    }
 
-    // @PostMapping("/fullemployee")
-    // public ResponseEntity<EmployeeFullDTO> createEmployee(@Valid @RequestBody EmployeeFullDTO employeeFullDTO) {
-    //     return ResponseEntity.ok().body(employeeFullDTO);
-    // }
+    @PostMapping("/fullemployee")
+    public ResponseEntity<EmployeeFullDTO> createEmployee(@Valid @RequestBody EmployeeFullDTO employeeFullDTO) {
+        return ResponseEntity.ok().body(employeeFullDTO);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employeeDetails) {
