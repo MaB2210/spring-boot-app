@@ -26,6 +26,7 @@ public class AddressDTO {
     @Pattern(regexp = "\\d{5}", message = "Zip Code must be a 5-digit number")
     private String zipCode;
 
+    @NotBlank(message = "zipCodeTwo has to be non blank")
     @ValidZipCode
     private String zipCodeTwo;
 }

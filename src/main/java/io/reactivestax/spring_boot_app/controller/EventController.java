@@ -1,7 +1,6 @@
 package io.reactivestax.spring_boot_app.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +11,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/events")
-@Validated
+// @Validated
 public class EventController {
 
     @PostMapping
