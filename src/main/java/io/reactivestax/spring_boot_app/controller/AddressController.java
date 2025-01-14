@@ -3,7 +3,10 @@ package io.reactivestax.spring_boot_app.controller;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,18 +23,33 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/addresses")
+@Slf4j
 public class AddressController {
 
     @Autowired
     private AddressService service;
 
+    @Autowired
+    Environment environment;
+
+
+
+    @Value("${spring.datasource.password}")
+    String springApplicationName;
+
+
     @GetMapping
     public List<AddressDTO> getAllAddresses() {
+        log.debug("spring application name is "+ springApplicationName);
+        //environment.getActiveProfiles()
+        //environment.getProperty();
+        //environment.getRequiredProperty();
         return service.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AddressDTO> getAddressById(@PathVariable Long id) {
+
         Optional<AddressDTO> address = service.findById(id);
         return address.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }

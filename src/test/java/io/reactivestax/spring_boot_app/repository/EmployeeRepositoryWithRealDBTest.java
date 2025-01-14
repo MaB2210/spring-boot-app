@@ -17,7 +17,8 @@ import io.reactivestax.spring_boot_app.domain.Employee;
 import io.reactivestax.spring_boot_app.domain.WorkGroup;
 
 @DataJpaTest
-@ActiveProfiles("test") // Ensure the application-test.properties is used
+//@ActiveProfiles("test") // Ensure the application-test.properties is used
+//If we enable this, it will override the VM args in the run configuration
 @Transactional // Ensures each test runs in its own transaction and rolls back after execution
 public class EmployeeRepositoryWithRealDBTest {
 

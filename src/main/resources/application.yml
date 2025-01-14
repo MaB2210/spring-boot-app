@@ -1,5 +1,9 @@
 server.port: 8080
 
+# just mentioning it here for later discussion when we visit
+# spring cloud config server
+#spring.cloud.config.server.url = http://config-server:8888
+
 spring:
   application.name: spring-boot-app
   datasource:
