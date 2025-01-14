@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,9 @@ import io.reactivestax.spring_boot_app.domain.Employee;
 import io.reactivestax.spring_boot_app.domain.WorkGroup;
 
 @DataJpaTest
-//@ActiveProfiles("test") // Ensure the application-test.properties is used
+//to explicitly declare that you are using a non-embedded database
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test") // Ensure the application-test.properties is used
 //If we enable this, it will override the VM args in the run configuration
 @Transactional // Ensures each test runs in its own transaction and rolls back after execution
 public class EmployeeRepositoryWithRealDBTest {

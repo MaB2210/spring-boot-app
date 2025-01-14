@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,15 +17,23 @@ import io.reactivestax.spring_boot_app.domain.Department;
 import io.reactivestax.spring_boot_app.domain.Employee;
 import io.reactivestax.spring_boot_app.domain.WorkGroup;
 
-//This works with Embedded Database H2 or HSQL or Derby (which ever you put in the classpath test scope)
+//This works with Embedded Database
+// H2 or HSQL or Derby (which ever you put in the classpath test scope)
 @DataJpaTest
 public class EmployeeRepositoryWithEmbeddedDBTest {
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    //Use the following hooks to insert/delete any common data
+    //@BeforeEach
+    //@BeforeAll
+
     @Test
     public void testSaveAndRetrieveEmployeeWithAddress() {
+        //setup the test specific
+        // data in the test itself using @autowired jdbcTemplate
+
         // Arrange: Create Address and Employee
         Address address = new Address();
         address.setStreet("123 Main St");
@@ -44,6 +55,7 @@ public class EmployeeRepositoryWithEmbeddedDBTest {
         assertThat(foundEmployee).isNotNull();
         assertThat(foundEmployee.getAddress()).isNotNull();
         assertThat(foundEmployee.getAddress().getStreet()).isEqualTo("123 Main St");
+        //add more detailed assertions here. the more the better.
     }
 
     @Test
@@ -67,6 +79,7 @@ public class EmployeeRepositoryWithEmbeddedDBTest {
         assertThat(foundEmployee).isNotNull();
         assertThat(foundEmployee.getDepartment()).isNotNull();
         assertThat(foundEmployee.getDepartment().getName()).isEqualTo("IT");
+        //add more detailed assertions here. the more the better.
     }
 
     @Test
