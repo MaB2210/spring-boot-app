@@ -1,8 +1,12 @@
 package io.reactivestax.spring_boot_app.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,7 +58,7 @@ public class EmployeeControllerTest {
         employee2.setDepartmentId(null);
         employee2.setWorkGroupIds(Collections.emptyList());
 
-        List<EmployeeDTO> employees = Arrays.asList(employee1,employee2);
+        List<EmployeeDTO> employees = Arrays.asList(employee1, employee2);
 
         when(employeeService.findAll()).thenReturn(employees);
 
@@ -94,10 +98,10 @@ public class EmployeeControllerTest {
         employee1.setFirstName("John5");
         employee1.setLastName("Doe5");
         employee1.setEmail("john.doe5@example.com");
-        employee1.setAge(0);
-        employee1.setAddressId(null);
-        employee1.setDepartmentId(null);
-        employee1.setWorkGroupIds(Collections.emptyList());
+        employee1.setAge(10);
+        employee1.setAddressId(15L);
+        employee1.setDepartmentId(10L);
+        employee1.setWorkGroupIds(Arrays.asList(1L, 2L, 3L));
 
         when(employeeService.findById(10L)).thenReturn(Optional.of(employee1));
 
@@ -107,10 +111,10 @@ public class EmployeeControllerTest {
                             "firstName": "John5",
                             "lastName": "Doe5",
                             "email": "john.doe5@example.com",
-                            "age": 0,
-                            "addressId": null,
-                            "departmentId": null,
-                            "workGroupIds": []
+                            "age": 10,
+                            "addressId": 15,
+                            "departmentId": 10,
+                            "workGroupIds": [1,2,3]
                         }
                 """;
 
@@ -124,50 +128,174 @@ public class EmployeeControllerTest {
     @Test
     public void whenPostRequestToCreateEmployee_thenCorrectResponse() throws Exception {
         String employeeJson = """
-                        {
-                          "firstName": "John5",
-                          "lastName": "Doe5",
-                          "email": "john.doe5@gmail.com",
-                          "age":64,
-                          "workGroupIds": [1,2,3]
-                        }
+                {
+                    "firstName": "John5",
+                    "lastName": "Doe5",
+                    "email": "john.doe5@example.com",
+                    "age": 19,
+                    "addressId": 15,
+                    "departmentId": 10,
+                    "workGroupIds": [1,2,3]
+                }
                 """;
+
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setId(35L);
+        employeeDTO.setFirstName("John5");
+        employeeDTO.setLastName("Doe5");
+        employeeDTO.setEmail("john.doe5@example.com");
+        employeeDTO.setAge(19);
+        employeeDTO.setAddressId(15L);
+        employeeDTO.setDepartmentId(10L);
+        employeeDTO.setWorkGroupIds(Arrays.asList(1L,2L, 3L));
+
+        when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
 
         mockMvc.perform(post("/api/employees/employee")
                 .content(employeeJson)
                 .contentType(MediaType.APPLICATION_JSON))
-                // .andDo(print())
+                .andDo(print()) // This will print the request and response details
                 .andExpect(status().isOk())
-                .andExpect(content().string("Employee created"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(employeeJson));
     }
-
 
     @Test
     public void whenPostRequestToCreateEmployeeWithMissingFirstName_thenBadRequestResponse() throws Exception {
         String employeeJson = """
-                        {
-                          "lastName": "Doe5",
-                          "email": "john.doe5@gmail.com",
-                          "age":64,
-                          "workGroupIds": [1,2,3]
-                        }
+                {
+                    "lastName": "Doe5",
+                    "email": "john.doe5@example.com",
+                    "age": 19,
+                    "addressId": 15,
+                    "departmentId": 10,
+                    "workGroupIds": [1,2,3]
+                }
                 """;
+
+        String missingFirstNameJsonResponse = """
+                {
+                    "firstName": "First name must not be blank"
+                }
+                """;                
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setId(35L);
+        employeeDTO.setFirstName("John5");
+        employeeDTO.setLastName("Doe5");
+        employeeDTO.setEmail("john.doe5@example.com");
+        employeeDTO.setAge(19);
+        employeeDTO.setAddressId(15L);
+        employeeDTO.setDepartmentId(10L);
+        employeeDTO.setWorkGroupIds(Arrays.asList(1L, 2L, 3L));
+
+        when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
 
         mockMvc.perform(post("/api/employees/employee")
                 .content(employeeJson)
                 .contentType(MediaType.APPLICATION_JSON))
-                // .andDo(print())
+                .andDo(print()) // This will print the request and response details
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Employee created"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(missingFirstNameJsonResponse))
+                ;
+    }
+
+    //TASK: We can add more validation tests for all fields here 
+    
+    @Test
+    public void whenPutRequestToCreateEmployee_thenOKResponse() throws Exception {
+        String employeeJson = """
+                {
+                    "id" : 35,
+                    "firstName": "John5",
+                    "lastName": "Doe5",
+                    "email": "john.doe5@example.com",
+                    "age": 19,
+                    "addressId": 15,
+                    "departmentId": 10,
+                    "workGroupIds": [1,2,3]
+                }
+                """;
+
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setId(35L);
+        employeeDTO.setFirstName("John5");
+        employeeDTO.setLastName("Doe5");
+        employeeDTO.setEmail("john.doe5@example.com");
+        employeeDTO.setAge(19);
+        employeeDTO.setAddressId(15L);
+        employeeDTO.setDepartmentId(10L);
+        employeeDTO.setWorkGroupIds(Arrays.asList(1L, 2L, 3L));
+
+        when(employeeService.findById(anyLong())).thenReturn(Optional.of(employeeDTO));
+        when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
+
+        mockMvc.perform(put("/api/employees/employee")
+                .content(employeeJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()) // This will print the request and response details
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(employeeJson));
     }
 
     @Test
-    public void whenPostRequestToCreateEmployeeAndInValidEmployee_thenValidationError() throws Exception {
-        String employeeJson = "{\"firstName\": \"\"}";
+    public void whenPutRequestToCreateEmployeeThatDoesNotExist_thenNotFoundResponse() throws Exception {
+        String employeeJson = """
+                {
+                    "firstName": "John5",
+                    "lastName": "Doe5",
+                    "email": "john.doe5@example.com",
+                    "age": 19,
+                    "addressId": 11,
+                    "departmentId": 10,
+                    "workGroupIds": [1,2,3]
+                }
+                """;
 
-        mockMvc.perform(post("/api/employees/employeenew")
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setId(35L); //json above is missing the ID
+        employeeDTO.setFirstName("John5");
+        employeeDTO.setLastName("Doe5");
+        employeeDTO.setEmail("john.doe5@example.com");
+        employeeDTO.setAge(19);
+        employeeDTO.setAddressId(15L);  //addressId is different compared to json above
+        employeeDTO.setDepartmentId(10L);
+        employeeDTO.setWorkGroupIds(Arrays.asList(1L, 2L, 3L));
+
+        when(employeeService.findById(anyLong())).thenReturn(Optional.of(employeeDTO));
+        when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
+
+        mockMvc.perform(put("/api/employees/employee")
                 .content(employeeJson)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andDo(print()) // This will print the request and response details
+                .andExpect(status().isNotFound())
+                //.andExpect(content().contentType(MediaType.APPLICATION_JSON)) //it won't be set in this case
+                .andExpect(content().string(""));
+    }
+
+
+    @Test
+    public void whenDeleteRequestToEmployeeById_thenCorrectResponse() throws Exception {
+        EmployeeDTO employee1 = new EmployeeDTO();
+
+        when(employeeService.findById(10L)).thenReturn(Optional.of(employee1));
+        
+        // Perform the FIRST DELETE request to verify the case when employee is FOUND
+        mockMvc.perform(delete("/api/employees/10")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print()) // This will print the request and response details
+            .andExpect(status().isNoContent())
+            .andExpect(content().string("")); // Expecting no content in the response body        
+        
+        when(employeeService.findById(10L)).thenReturn(Optional.empty());
+        // Perform the SECOND DELETE request to verify the case when employee is not found
+        mockMvc.perform(delete("/api/employees/10")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()) // This will print the request and response details
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("")); // Expecting no content in the response body
+
     }
 }
