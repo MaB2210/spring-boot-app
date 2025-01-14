@@ -162,7 +162,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void whenPostRequestToCreateEmployeeWithMissingFirstName_thenBadRequestResponse() throws Exception {
-        String employeeJson = """
+        String employeeJsonRequest = """
                 {
                     "lastName": "Doe5",
                     "email": "john.doe5@example.com",
@@ -191,7 +191,7 @@ public class EmployeeControllerTest {
         when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
 
         mockMvc.perform(post("/api/employees/employee")
-                .content(employeeJson)
+                .content(employeeJsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // This will print the request and response details
                 .andExpect(status().isBadRequest())
@@ -243,6 +243,7 @@ public class EmployeeControllerTest {
     public void whenPutRequestToCreateEmployeeThatDoesNotExist_thenNotFoundResponse() throws Exception {
         String employeeJson = """
                 {
+                    "id" : 35,
                     "firstName": "John5",
                     "lastName": "Doe5",
                     "email": "john.doe5@example.com",
@@ -263,8 +264,7 @@ public class EmployeeControllerTest {
         employeeDTO.setDepartmentId(10L);
         employeeDTO.setWorkGroupIds(Arrays.asList(1L, 2L, 3L));
 
-        when(employeeService.findById(anyLong())).thenReturn(Optional.of(employeeDTO));
-        when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
+        when(employeeService.findById(anyLong())).thenReturn(Optional.empty());
 
         mockMvc.perform(put("/api/employees/employee")
                 .content(employeeJson)
