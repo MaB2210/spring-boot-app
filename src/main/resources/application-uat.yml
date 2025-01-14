@@ -1,0 +1,17 @@
+server.port: 8080
+
+spring:
+  application.name: spring-boot-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/employee_db
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 20000
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+  
