@@ -43,7 +43,7 @@ public class EmployeeServiceTest {
         Optional<EmployeeDTO> employee = employeeService.findById(1L);
         assertThat(employee).isPresent();
         assertThat(employee.get().getFirstName()).isEqualTo("John");
-    }
+    } 
 
     @Test
     public void testSave() {
