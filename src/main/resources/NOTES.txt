@@ -1,0 +1,10 @@
+docker run --name postgres-container-dev \
+  -e POSTGRES_USER=postgres_dev \
+  -e POSTGRES_PASSWORD=postgres_dev \
+  -e POSTGRES_DB=employee_dev_db \
+  -p 5433:5432 \
+  -d postgres:15-alpine
+
+docker logs -f postgres-container-dev
+
+docker ps (to confirm ports etc)

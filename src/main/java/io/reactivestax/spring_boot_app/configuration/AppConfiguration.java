@@ -18,7 +18,7 @@ public class AppConfiguration {
         // Override default HikariCP properties
         hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/employee_db"); // Database URL
         hikariConfig.setUsername("postgres"); // Database username
-        hikariConfig.setPassword("postgres"); // Database password
+        hikariConfig.setPassword("postgres22"); // Database password
         hikariConfig.setMaximumPoolSize(10); // Maximum number of connections in the pool
         hikariConfig.setMinimumIdle(5); // Minimum number of idle connections
         hikariConfig.setIdleTimeout(30000); // Idle timeout (in milliseconds)

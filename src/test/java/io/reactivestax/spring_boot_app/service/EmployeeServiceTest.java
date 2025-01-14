@@ -1,6 +1,6 @@
-package io.reactivestax.spring_boot_app.controller;
+package io.reactivestax.spring_boot_app.service;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Arrays;
@@ -15,8 +15,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import io.reactivestax.spring_boot_app.domain.Employee;
 import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
 import io.reactivestax.spring_boot_app.repository.EmployeeRepository;
-import io.reactivestax.spring_boot_app.service.EmployeeService;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest // This annotation is used to load the Spring context before the test is run
 public class EmployeeServiceTest {
