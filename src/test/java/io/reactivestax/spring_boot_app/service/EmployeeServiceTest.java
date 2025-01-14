@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import io.reactivestax.spring_boot_app.domain.Employee;
@@ -17,6 +18,7 @@ import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
 import io.reactivestax.spring_boot_app.repository.EmployeeRepository;
 
 @SpringBootTest // This annotation is used to load the Spring context before the test is run
+@ActiveProfiles("test")
 public class EmployeeServiceTest {
 
     @Autowired
