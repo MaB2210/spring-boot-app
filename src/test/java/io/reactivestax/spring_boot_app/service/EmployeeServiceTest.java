@@ -1,11 +1,9 @@
 package io.reactivestax.spring_boot_app.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-
-import java.util.Arrays;
-import java.util.Optional;
-
+import io.reactivestax.spring_boot_app.domain.Address;
+import io.reactivestax.spring_boot_app.domain.Employee;
+import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
+import io.reactivestax.spring_boot_app.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import io.reactivestax.spring_boot_app.domain.Employee;
-import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
-import io.reactivestax.spring_boot_app.repository.EmployeeRepository;
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest // This annotation is used to load the Spring context before the test is run
 @ActiveProfiles("test")
@@ -43,7 +43,7 @@ public class EmployeeServiceTest {
         Optional<EmployeeDTO> employee = employeeService.findById(1L);
         assertThat(employee).isPresent();
         assertThat(employee.get().getFirstName()).isEqualTo("John");
-    } 
+    }
 
     @Test
     public void testSave() {
@@ -54,4 +54,26 @@ public class EmployeeServiceTest {
         EmployeeDTO savedEmployee = employeeService.save(employeeDTO);
         assertThat(savedEmployee.getFirstName()).isEqualTo("John");
     }
+
+    @Test
+    public void testDeleteById() {
+        Employee employee = Employee.builder()
+                .id(1L)
+                .firstName("abc")
+                .lastName("def")
+                .email("abc.def@gmail.com").build();
+
+        Mockito.when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+
+        Optional<EmployeeDTO> employeeDTO = employeeService.findById(1L);
+
+        assertThat(employeeDTO).isNotNull();
+        assertThat(employeeDTO.get().getEmail().equals("abc.def@gmail.com"));
+
+        employeeService.deleteById(1L);
+
+        assertThat(employeeService.findById(1L).isEmpty());
+    }
+
+
 }

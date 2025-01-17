@@ -3,9 +3,9 @@ server.port: 8080
 spring:
   application.name: spring-boot-app
   datasource:
-    url: jdbc:postgresql://localhost:5432/employee_db
-    username: postgresUser
-    password: postgres1234
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: pgadmin
+    password: passw0rd123
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5

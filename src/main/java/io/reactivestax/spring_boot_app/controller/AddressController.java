@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 public class AddressController {
 
     @Autowired
-    private AddressService service;
+    private AddressService addressService;
 
     @Autowired
     Environment environment;
@@ -44,31 +44,31 @@ public class AddressController {
         //environment.getActiveProfiles()
         //environment.getProperty();
         //environment.getRequiredProperty();
-        return service.findAll();
+        return addressService.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AddressDTO> getAddressById(@PathVariable Long id) {
 
-        Optional<AddressDTO> address = service.findById(id);
+        Optional<AddressDTO> address = addressService.findById(id);
         return address.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public AddressDTO createAddress(@Valid @RequestBody AddressDTO addressDTO) {
-        return service.save(addressDTO);
+        return addressService.save(addressDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AddressDTO> updateAddress(@PathVariable Long id, @RequestBody AddressDTO addressDetails) {
-        Optional<AddressDTO> address = service.findById(id);
+        Optional<AddressDTO> address = addressService.findById(id);
         if (address.isPresent()) {
             AddressDTO updatedAddress = address.get();
             updatedAddress.setStreet(addressDetails.getStreet());
             updatedAddress.setCity(addressDetails.getCity());
             updatedAddress.setState(addressDetails.getState());
             updatedAddress.setZipCode(addressDetails.getZipCode());
-            return ResponseEntity.ok(service.save(updatedAddress));
+            return ResponseEntity.ok(addressService.save(updatedAddress));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -76,8 +76,8 @@ public class AddressController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
-        if (service.findById(id).isPresent()) {
-            service.deleteById(id);
+        if (addressService.findById(id).isPresent()) {
+            addressService.deleteById(id);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

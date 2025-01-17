@@ -1,21 +1,12 @@
 package io.reactivestax.spring_boot_app.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.reactivestax.spring_boot_app.domain.Address;
+import io.reactivestax.spring_boot_app.domain.Department;
+import io.reactivestax.spring_boot_app.domain.Employee;
+import io.reactivestax.spring_boot_app.domain.WorkGroup;
+import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
+import io.reactivestax.spring_boot_app.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,8 +14,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
-import io.reactivestax.spring_boot_app.service.EmployeeService;
+import java.util.*;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
 public class EmployeeControllerTest {
@@ -34,6 +33,7 @@ public class EmployeeControllerTest {
 
     @MockitoBean
     private EmployeeService employeeService;
+
 
     @Test
     public void whenGetRequestToEmployees_thenCorrectResponse() throws Exception {
@@ -62,31 +62,33 @@ public class EmployeeControllerTest {
 
         when(employeeService.findAll()).thenReturn(employees);
 
-        String employeeJsonResponse = """
-                        [{
-                            "id": 10,
-                            "firstName": "John5",
-                            "lastName": "Doe5",
-                            "email": "john.doe5@example.com",
-                            "age": 0,
-                            "addressId": null,
-                            "departmentId": null,
-                            "workGroupIds": []
-                        },
-                        {
-                            "id": 11,
-                            "firstName": "John5",
-                            "lastName": "Doe5",
-                            "email": "john.doe5@example.com",
-                            "age": 0,
-                            "addressId": null,
-                            "departmentId": null,
-                            "workGroupIds": []
-                        }]
-                """;
+//        String employeeJsonResponse = """
+//                        [{
+//                            "id": 10,
+//                            "firstName": "John5",
+//                            "lastName": "Doe5",
+//                            "email": "john.doe5@example.com",
+//                            "age": 0,
+//                            "addressId": null,
+//                            "departmentId": null,
+//                            "workGroupIds": []
+//                        },
+//                        {
+//                            "id": 11,
+//                            "firstName": "John5",
+//                            "lastName": "Doe5",
+//                            "email": "john.doe5@example.com",
+//                            "age": 0,
+//                            "addressId": null,
+//                            "departmentId": null,
+//                            "workGroupIds": []
+//                        }]
+//                """;
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String employeeJsonResponse = objectMapper.writeValueAsString(employees);
         mockMvc.perform(get("/api/employees")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(employeeJsonResponse));
     }
@@ -105,21 +107,23 @@ public class EmployeeControllerTest {
 
         when(employeeService.findById(10L)).thenReturn(Optional.of(employee1));
 
-        String employeeJsonResponse = """
-                        {
-                            "id": 10,
-                            "firstName": "John5",
-                            "lastName": "Doe5",
-                            "email": "john.doe5@example.com",
-                            "age": 10,
-                            "addressId": 15,
-                            "departmentId": 10,
-                            "workGroupIds": [1,2,3]
-                        }
-                """;
+//        String employeeJsonResponse = """
+//                        {
+//                            "id": 10,
+//                            "firstName": "John5",
+//                            "lastName": "Doe5",
+//                            "email": "john.doe5@example.com",
+//                            "age": 10,
+//                            "addressId": 15,
+//                            "departmentId": 10,
+//                            "workGroupIds": [1,2,3]
+//                        }
+//                """;
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String employeeJsonResponse = objectMapper.writeValueAsString(employee1);
         mockMvc.perform(get("/api/employees/10")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(employeeJsonResponse));
@@ -147,13 +151,13 @@ public class EmployeeControllerTest {
         employeeDTO.setAge(19);
         employeeDTO.setAddressId(15L);
         employeeDTO.setDepartmentId(10L);
-        employeeDTO.setWorkGroupIds(Arrays.asList(1L,2L, 3L));
+        employeeDTO.setWorkGroupIds(Arrays.asList(1L, 2L, 3L));
 
         when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
 
         mockMvc.perform(post("/api/employees/employee")
-                .content(employeeJson)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(employeeJson)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // This will print the request and response details
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -177,7 +181,7 @@ public class EmployeeControllerTest {
                 {
                     "firstName": "First name must not be blank"
                 }
-                """;                
+                """;
         EmployeeDTO employeeDTO = new EmployeeDTO();
         employeeDTO.setId(35L);
         employeeDTO.setFirstName("John5");
@@ -191,17 +195,17 @@ public class EmployeeControllerTest {
         when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
 
         mockMvc.perform(post("/api/employees/employee")
-                .content(employeeJsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(employeeJsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // This will print the request and response details
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(missingFirstNameJsonResponse))
-                ;
+        ;
     }
 
     //TASK: We can add more validation tests for all fields here 
-    
+
     @Test
     public void whenPutRequestToCreateEmployee_thenOKResponse() throws Exception {
         String employeeJson = """
@@ -231,8 +235,8 @@ public class EmployeeControllerTest {
         when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO);
 
         mockMvc.perform(put("/api/employees/employee")
-                .content(employeeJson)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(employeeJson)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // This will print the request and response details
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -267,8 +271,8 @@ public class EmployeeControllerTest {
         when(employeeService.findById(anyLong())).thenReturn(Optional.empty());
 
         mockMvc.perform(put("/api/employees/employee")
-                .content(employeeJson)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(employeeJson)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // This will print the request and response details
                 .andExpect(status().isNotFound())
                 //.andExpect(content().contentType(MediaType.APPLICATION_JSON)) //it won't be set in this case
@@ -281,21 +285,90 @@ public class EmployeeControllerTest {
         EmployeeDTO employee1 = new EmployeeDTO();
 
         when(employeeService.findById(10L)).thenReturn(Optional.of(employee1));
-        
+
         // Perform the FIRST DELETE request to verify the case when employee is FOUND
         mockMvc.perform(delete("/api/employees/10")
-            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print()) // This will print the request and response details
-            .andExpect(status().isNoContent())
-            .andExpect(content().string("")); // Expecting no content in the response body        
-        
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()) // This will print the request and response details
+                .andExpect(status().isNoContent())
+                .andExpect(content().string("")); // Expecting no content in the response body
+
         when(employeeService.findById(10L)).thenReturn(Optional.empty());
         // Perform the SECOND DELETE request to verify the case when employee is not found
         mockMvc.perform(delete("/api/employees/10")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // This will print the request and response details
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("")); // Expecting no content in the response body
 
+    }
+
+
+    @Test
+    public void whenPostRequestToAssociateEmployeeWithAddress_thenCorrectResponse() throws Exception {
+        Employee employee = new Employee();
+        employee.setId(10L);
+        employee.setFirstName("John5");
+        employee.setLastName("Doe5");
+        employee.setEmail("john.doe5@example.com");
+
+        Address address = new Address();
+        address.setId(20L);
+
+        doNothing().when(employeeService).associateEmployeeWithAddress(10L,20L);
+
+        mockMvc.perform(post("/api/employees/10/address/20"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Address associated with Employee"));
+
+    }
+
+    @Test
+    public void whenPostRequestToAssociateEmployeeWithDepartment_thenCorrectResponse() throws Exception {
+        Employee employee = new Employee();
+        employee.setId(10L);
+        employee.setFirstName("John5");
+        employee.setLastName("Doe5");
+        employee.setEmail("john.doe5@example.com");
+
+        Department department = new Department();
+        department.setId(20L);
+
+        doNothing().when(employeeService).addEmployeeToDepartment(10L,20L);
+
+        mockMvc.perform(post("/api/employees/10/department/20"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Employee added to Department"));
+
+    }
+
+    @Test
+    public void whenPostRequestToAssociateEmployeeWithWorkGroup_thenCorrectResponse() throws Exception {
+        Employee employee = new Employee();
+        employee.setId(10L);
+        employee.setFirstName("John5");
+        employee.setLastName("Doe5");
+        employee.setEmail("john.doe5@example.com");
+
+        WorkGroup workGroup1 = new WorkGroup();
+        workGroup1.setId(20L);
+        WorkGroup workGroup2 = new WorkGroup();
+        workGroup2.setId(30L);
+        WorkGroup workGroup3 = new WorkGroup();
+        workGroup3.setId(40L);
+        List<Long> workGroupIds = Arrays.asList(20L,30L,40L);
+
+        doNothing().when(employeeService).addEmployeeToWorkGroups(10L,workGroupIds);
+
+        String workGroupJson = "[20,30,40]";
+
+         mockMvc.perform(post("/api/employees/10/workgroups")
+                .content(workGroupJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Employee added to WorkGroups"));
     }
 }
