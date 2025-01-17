@@ -1,6 +1,5 @@
 package io.reactivestax.spring_boot_app.service;
 
-import io.reactivestax.spring_boot_app.domain.Address;
 import io.reactivestax.spring_boot_app.domain.Employee;
 import io.reactivestax.spring_boot_app.dto.EmployeeDTO;
 import io.reactivestax.spring_boot_app.repository.EmployeeRepository;
@@ -16,6 +15,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
 
 @SpringBootTest // This annotation is used to load the Spring context before the test is run
 @ActiveProfiles("test")
@@ -57,22 +58,9 @@ public class EmployeeServiceTest {
 
     @Test
     public void testDeleteById() {
-        Employee employee = Employee.builder()
-                .id(1L)
-                .firstName("abc")
-                .lastName("def")
-                .email("abc.def@gmail.com").build();
-
-        Mockito.when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
-
-        Optional<EmployeeDTO> employeeDTO = employeeService.findById(1L);
-
-        assertThat(employeeDTO).isNotNull();
-        assertThat(employeeDTO.get().getEmail().equals("abc.def@gmail.com"));
-
-        employeeService.deleteById(1L);
-
-        assertThat(employeeService.findById(1L).isEmpty());
+        Mockito.doNothing().when(employeeRepository).deleteById(anyLong());
+        employeeService.deleteById(10L);
+        Mockito.verify(employeeRepository,times(1)).deleteById(10L);
     }
 
 

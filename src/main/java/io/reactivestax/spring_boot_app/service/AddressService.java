@@ -15,23 +15,23 @@ import io.reactivestax.spring_boot_app.repository.AddressRepository;
 public class AddressService {
 
     @Autowired
-    private AddressRepository repository;
+    private AddressRepository addressRepository;
 
     public List<AddressDTO> findAll() {
-        return repository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+        return addressRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public Optional<AddressDTO> findById(Long id) {
-        return repository.findById(id).map(this::convertToDTO);
+        return addressRepository.findById(id).map(this::convertToDTO);
     }
 
     public AddressDTO save(AddressDTO addressDTO) {
         Address address = convertToEntity(addressDTO);
-        return convertToDTO(repository.save(address));
+        return convertToDTO(addressRepository.save(address));
     }
 
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        addressRepository.deleteById(id);
     }
 
     private AddressDTO convertToDTO(Address address) {
