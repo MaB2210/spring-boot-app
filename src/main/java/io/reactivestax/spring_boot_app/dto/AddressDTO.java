@@ -4,6 +4,7 @@ import io.reactivestax.spring_boot_app.validation.ValidZipCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
